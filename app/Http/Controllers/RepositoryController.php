@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Repository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RepositoryController extends Controller
 {
@@ -35,7 +36,12 @@ class RepositoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request
+            ->user()
+            ->repositories()
+            ->create($request->all());
+
+        return redirect("repositories");
     }
 
     /**

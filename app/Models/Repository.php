@@ -10,6 +10,8 @@ class Repository extends Model
 {
     use HasFactory;
 
+    protected $fillable = ["url", "description"];
+
     /**
      * Get the user that owns the Repository
      *

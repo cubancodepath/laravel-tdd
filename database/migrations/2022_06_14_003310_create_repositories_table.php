@@ -16,6 +16,8 @@ return new class extends Migration {
         Schema::create("repositories", function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(User::class);
+            $table->string("url");
+            $table->text("description");
             $table->timestamps();
         });
     }
