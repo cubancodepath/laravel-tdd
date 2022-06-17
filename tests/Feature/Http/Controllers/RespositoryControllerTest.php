@@ -42,12 +42,13 @@ class RespositoryControllerTest extends TestCase
 
     public function test_update()
     {
-        $repository = Repository::factory()->create();
+        $user = User::factory()->create();
+
+        $repository = Repository::factory()->create(["user_id" => $user->id]);
         $data = [
             "url" => $this->faker->url(),
             "description" => $this->faker->text(),
         ];
-        $user = User::factory()->create();
         $this->actingAs($user)
             ->put("repositories/$repository->id", $data)
             ->assertRedirect("repositories/$repository->id/edit");
@@ -76,8 +77,8 @@ class RespositoryControllerTest extends TestCase
 
     public function test_destroy()
     {
-        $repository = Repository::factory()->create();
         $user = User::factory()->create();
+        $repository = Repository::factory()->create(["user_id" => $user->id]);
         $this->actingAs($user)
             ->delete(route("repositories.destroy", $repository))
             ->assertRedirect("repositories");
@@ -87,5 +88,29 @@ class RespositoryControllerTest extends TestCase
             "url" => $repository->url,
             "description" => $repository->description,
         ]);
+    }
+
+    public function test_destroy_policy()
+    {
+        $repository = Repository::factory()->create();
+        $user = User::factory()->create();
+        $this->actingAs($user)
+            ->delete(route("repositories.destroy", $repository))
+            ->assertStatus(403);
+    }
+
+    public function test_policy_update()
+    {
+        $user = User::factory()->create();
+        $repository = Repository::factory()->create();
+
+        $data = [
+            "url" => $this->faker->url(),
+            "description" => $this->faker->text(),
+        ];
+
+        $this->actingAs($user)
+            ->put("repositories/$repository->id", $data)
+            ->assertStatus(403);
     }
 }

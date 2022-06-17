@@ -76,6 +76,10 @@ class RepositoryController extends Controller
      */
     public function update(RepositoryRequest $request, Repository $repository)
     {
+        if ($request->user()->id != $repository->user->id) {
+            abort(403);
+        }
+
         $repository->update($request->all());
 
         return redirect()->route("repositories.edit", $repository);
@@ -87,8 +91,11 @@ class RepositoryController extends Controller
      * @param  \App\Models\Repository  $repository
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Repository $repository)
+    public function destroy(Request $request, Repository $repository)
     {
+        if ($request->user()->id != $repository->user->id) {
+            abort(403);
+        }
         $repository->delete();
 
         return redirect()->route("repositories.index");
