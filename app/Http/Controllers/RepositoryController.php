@@ -14,9 +14,10 @@ class RepositoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $repositories = $request->user()->repositories;
+        return view("repositories.index", compact("repositories"));
     }
 
     /**
