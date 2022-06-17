@@ -89,6 +89,8 @@ class RepositoryController extends Controller
      */
     public function destroy(Repository $repository)
     {
-        //
+        $repository->delete();
+
+        return redirect()->route("repositories.index");
     }
 }
