@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\RepositoryRequest;
 use App\Models\Repository;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class RepositoryController extends Controller
 {
@@ -14,9 +12,9 @@ class RepositoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        $repositories = $request->user()->repositories;
+        $repositories = auth()->user()->repositories;
         return view("repositories.index", compact("repositories"));
     }
 
@@ -52,11 +50,9 @@ class RepositoryController extends Controller
      * @param  \App\Models\Repository  $repository
      * @return \Illuminate\Http\Response
      */
-    public function show(Request $request, Repository $repository)
+    public function show(Repository $repository)
     {
-        if ($request->user()->id != $repository->user->id) {
-            abort(403);
-        }
+        $this->authorize("owner", $repository);
 
         return view("repositories.show", compact("repository"));
     }
@@ -67,11 +63,9 @@ class RepositoryController extends Controller
      * @param  \App\Models\Repository  $repository
      * @return \Illuminate\Http\Response
      */
-    public function edit(Request $request, Repository $repository)
+    public function edit(Repository $repository)
     {
-        if ($request->user()->id != $repository->user->id) {
-            abort(403);
-        }
+        $this->authorize("owner", $repository);
 
         return view("repositories.edit", compact("repository"));
     }
@@ -85,9 +79,7 @@ class RepositoryController extends Controller
      */
     public function update(RepositoryRequest $request, Repository $repository)
     {
-        if ($request->user()->id != $repository->user->id) {
-            abort(403);
-        }
+        $this->authorize("owner", $repository);
 
         $repository->update($request->all());
 
@@ -100,11 +92,10 @@ class RepositoryController extends Controller
      * @param  \App\Models\Repository  $repository
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, Repository $repository)
+    public function destroy(Repository $repository)
     {
-        if ($request->user()->id != $repository->user->id) {
-            abort(403);
-        }
+        $this->authorize("owner", $repository);
+
         $repository->delete();
 
         return redirect()->route("repositories.index");
